@@ -29,7 +29,7 @@ public class Terrain {
   }
 
   public int[][] getPatches() {
-    //FIXME return safely;
+    // FIXME Return a safe copy.
     return patches;
   }
 

@@ -30,8 +30,7 @@ public class TerrainView extends Canvas {
     if (color == null) {
       java.awt.Color awtColor = new java.awt.Color(key);
       color = new Color(awtColor.getRed() / 255.0, awtColor.getGreen() / 255.0,
-          awtColor.getBlue() / 255.0,
-          awtColor.getAlpha() / 255.0);
+          awtColor.getBlue() / 255.0, awtColor.getAlpha() / 255.0);
       colors.put(key, color);
     }
     return color;

@@ -7,20 +7,30 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 
 public class MainController {
 
-  @FXML
-  private TerrainView terrainView;
-  @FXML
-  private ToggleButton runToggle;
-  @FXML
-  private Slider populationSize;
+  @FXML private Button resetter;
+  @FXML private TerrainView terrainView;
+  @FXML private ToggleButton runToggle;
+  @FXML private Slider populationSize;
   private boolean running;
   private Terrain terrain;
   private AnimationTimer timer;
+
+  @FXML
+  private void initialize() {
+    timer = new AnimationTimer() {
+      @Override
+      public void handle(long now) {
+        terrainView.draw(terrain.getPatches());
+      }
+    };
+    reset();
+  }
 
   @FXML
   private void toggleRun(ActionEvent actionEvent) {
@@ -33,6 +43,7 @@ public class MainController {
 
   private void start() {
     running = true;
+    resetter.setDisable(true);
     timer.start();
     new Runner().start();
   }
@@ -44,14 +55,10 @@ public class MainController {
   }
 
   @FXML
-  private void initialize() {
-    terrain = new Terrain(3, new Random());
-    timer = new AnimationTimer() {
-      @Override
-      public void handle(long now) {
-        terrainView.draw(terrain.getPatches());
-      }
-    };
+  private void reset() {
+    terrain = new Terrain((int) populationSize.getValue(), new Random());
+    terrain.tick();
+    terrainView.draw(terrain.getPatches());
   }
 
   private class Runner extends Thread {
@@ -59,15 +66,21 @@ public class MainController {
     @Override
     public void run() {
       while (running) {
-        terrain.tick();
+        for (int i = 0; i < 10; i++) {
+          terrain.tick();
+        }
         try {
           Thread.sleep(1);
         } catch (InterruptedException e) {
-          // it's alright
+          // DO NOTHING! GET ON WITH YOUR LIFE!
         }
       }
-      Platform.runLater(() -> runToggle.setDisable(false));
-
+      Platform.runLater(() -> {
+        runToggle.setDisable(false);
+        resetter.setDisable(false);
+      });
     }
+
   }
+
 }
